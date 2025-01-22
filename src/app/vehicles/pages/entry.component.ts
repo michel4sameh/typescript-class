@@ -1,8 +1,14 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { VehicleStore } from '../services/vehicle-store';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { VehicleCreateModel } from '../types';
 import { FormModel } from '@shared';
+import { normalizeVehicle } from '../utils';
 @Component({
   selector: 'app-vehicle-entry',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,12 +58,27 @@ export class EntryComponent {
   store = inject(VehicleStore);
 
   form = new FormGroup<FormModel<VehicleCreateModel>>({
-    make: new FormControl('', { nonNullable: true }),
+    make: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
     model: new FormControl('', { nonNullable: true }),
-    year: new FormControl<number>(2025, { nonNullable: true }),
+    year: new FormControl(2025, {
+      nonNullable: true,
+      validators: [Validators.min(1986)],
+    }),
   });
 
   addVehicle() {
-    console.log(this.form.value);
+    if (this.form.valid) {
+      // you must get the data from the form
+      const dataFromForm = this.form.getRawValue();
+      // run it through the normalizer
+      const vehicleToAdd = normalizeVehicle(dataFromForm);
+      // and then you can add it to the store.
+      this.store.add(vehicleToAdd);
+    } else {
+      alert('Get real, bra!~');
+    }
   }
 }
