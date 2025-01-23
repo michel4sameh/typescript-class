@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Vehicle, VehicleCreateModel, VehiclesSchema } from '../types';
 import { Brand } from '@shared';
-import { catchError, map, Observable, tap } from 'rxjs';
+import { map, Observable } from 'rxjs';
+import { Vehicle, VehicleCreateModel, VehiclesSchema } from '../types';
 
 export type ApiVehicle = Brand<Vehicle, 'api-vehicles'>;
 
